@@ -14,7 +14,7 @@ on:
       KERNEL_TREE_BRANCH:
         description: 'Kernel Tree Branch'
         required: true
-        default: 'stable-r1'
+        default: 'stable-r1.6'
       CODENAME:
         description: 'Phone Codename'
         default: 'peridot'
@@ -35,7 +35,7 @@ on:
         description: 'Telegram Chat ID (optional)'
         required: false
       KERNELSU_OPTION:
-        description: 'Choose KernelSU setup option (1: next, 2: next-susfs, 3: none)'
+        description: 'Choose KernelSU setup option (0: none, 1: next, 2: next-susfs, 3: sukisu-susfs)'
         required: true
         default: '1'
         type: choice
@@ -121,14 +121,17 @@ jobs:
         rm -rf KernelSU-Next
 
         # Choose the KernelSU setup script based on the selected option
-        if [[ "${{ github.event.inputs.KERNELSU_OPTION }}" == '1' ]]; then
+        if [[ "${{ github.event.inputs.KERNELSU_OPTION }}" == '0' ]]; then
+          echo "Skipping KernelSU setup..."
+        elif [[ "${{ github.event.inputs.KERNELSU_OPTION }}" == '1' ]]; then
           echo "Using KernelSU Next setup script..."
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s next
         elif [[ "${{ github.event.inputs.KERNELSU_OPTION }}" == '2' ]]; then
           echo "Using KernelSU Next-SUSFS setup script..."
           curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next-susfs/kernel/setup.sh" | bash -s next-susfs
         elif [[ "${{ github.event.inputs.KERNELSU_OPTION }}" == '3' ]]; then
-          echo "Skipping KernelSU setup..."
+          echo "Using Sukisu Ultra SUSFS setup.."
+          curl -LSs "https://raw.githubusercontent.com/ShirkNeko/SukiSU-Ultra/main/kernel/setup.sh" | bash -s susfs-stable
         else
           echo "Invalid KernelSU option selected!"
           exit 1
